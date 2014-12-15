@@ -1,7 +1,118 @@
 # -*- coding: utf-8 -*-
+import os
+import sys
 import random
 
 import yaml
+
+class Distribution(object):
+    """
+    Tracks statistics for a stream of discrete events.
+    """
+    
+    def __init__(self):
+        self._d = {}
+        self._total = 0
+        
+    def __iadd__(self, v):
+        self._d.setdefault(v, 0)
+        self._d[v] += 1
+        self._total += 1
+        return self
+        
+    @property
+    def total(self):
+        return self._total
+        
+    @property
+    def median(self):
+        if not self._d:
+            return
+        values = sorted((_b, _a) for _a, _b in self._d.iteritems())
+        return values[-1][1]
+        
+    @property
+    def histogram(self):
+        return self._d.copy()
+    
+    @property
+    def nhistogram(self):
+        return dict((_a, _b/float(self._total)) for _a, _b in self._d.iteritems())
+        
+class Aggregate(object):
+    """
+    Tracks statistics for a stream of continuous events.
+    """
+    
+    def __init__(self):
+        self._sum = 0.
+        self._total = 0
+        self._values = []
+        self._min = 1e9999999
+        self._max = -1e9999999
+        
+    def __iadd__(self, v):
+        v = float(v)
+        self._values.append(v)
+        self._sum += v
+        self._total += 1
+        self._min = min(self._min, v)
+        self._max = max(self._max, v)
+        return self
+    
+    @property
+    def total(self):
+        return self._total
+        
+    @property
+    def max(self):
+        return self._max
+    
+    @property
+    def min(self):
+        return self._min
+    
+    @property
+    def median(self):
+        if not self._values:
+            return
+        values = sorted(self._values)
+        return values[int(len(values)/2.)]
+        
+    @property
+    def mean(self):
+        if not self._total:
+            return
+        return self._sum / self._total
+
+class ArgMaxSet(object):
+    """
+    Tracks one or more objects corresponding to a maximum score.
+    
+    Similar in concept to the traditional argmax() but tracks objects that have
+    the same score and randomly choices between them for the final selection.
+    """
+    
+    def __init__(self):
+        self._score = -1e9999999999
+        self._objects = set()
+        
+    def add(self, score, obj):
+        if score > self._score:
+            self._score = score
+            self._objects = set([obj])
+        elif score == self._score:
+            self._objects.add(obj)
+    
+    @property
+    def score(self):
+        return self._score
+    
+    @property    
+    def obj(self):
+        if not self._objects:
+            return
+        return random.choice(list(self._objects))
 
 def weighted_choice(choices, get_total=None, get_weight=None):
     """
@@ -106,6 +217,12 @@ class Agent(object):
         will be the current state.
         """
 
+    def record_history(self, tpl):
+        if self.history and isinstance(tpl, float):
+            assert not isinstance(self.history[-1], float), \
+                'Double feedback append.'
+        self.history.append(tpl)
+        
     @classmethod
     def load(cls, fn=None, ignore_errors=False):
         fn = fn or cls.filename
@@ -203,18 +320,20 @@ class SARSAAgent(Agent):
         if random.random() > self._epsilon:
             # Exploit our Q-values.
             best = (-1e999999999999, None)
+#            print 'exploit'
             for action in actions:
                 best = max(best, (self.get_Q(state, action), action))
             action = best[1]
         else:
             # Otherwise explore something random.
+#            print 'explore'
             action = random.choice(actions)
         
         # Record (state,action) tuple for later learning update.
-        self.history.append((state, action))
+        self.record_history((state, action))
         
         return action
-        
+    
     def reinforce(self, feedback, state=None, replace_last=False, end=None):
         """
         Processes a feedback signal (e.g. reward or punishment).
@@ -228,10 +347,12 @@ class SARSAAgent(Agent):
         if replace_last:
             # Overwrite our last reward, since it was incorrect as our
             # opponent did something to effect it in hindsight.
-            assert not isinstance(self.history, tuple), self.history
+            assert not isinstance(self.history[-1], tuple), self.history
             self.history[-1] = feedback
             self.rewards[-1] = feedback
         else:
+            if self.history:
+                assert not isinstance(self.history[-1], float), 'Double feedback append.'
             self.history.append(feedback)
             self.rewards.append(feedback)
             
@@ -279,7 +400,7 @@ class SARSALFAAgent(Agent):
     (gamma) - reward discount factor (between 0 and 1)
     (alpha) - learning rate (between 0 and 1)
     (epsilon) - parameter for the epsilon-greedy policy (between 0 and 1)
-    (lambda) - parameter for the SARSA(lambda) learning algorith 
+    (lambda) - parameter for the SARSA(lambda) learning algorithm
     """
     
     def __init__(self, alpha=0.1, gamma=1.0, epsilon=0.1, use_traces=False, *args, **kwargs):
@@ -314,6 +435,7 @@ class SARSALFAAgent(Agent):
             alpha=self.alpha,
             gamma=self.gamma,
             epsilon=self.epsilon,
+            epsilon_decay_factor=self.epsilon_decay_factor,
             episodes=self.episodes,
             use_traces=self.use_traces,
             every_step=self.every_step,
@@ -373,7 +495,10 @@ class SARSALFAAgent(Agent):
         # Select action according to an epsilon-greedy strategy.
         if random.random() > self._epsilon:
             # Exploit our Q-values.
-            best = (-1e999999999999, None)
+#            print>>sys.stderr,'exploit'
+            #best = (-1e999999999999, None)
+            best = ArgMaxSet()
+#            print>>sys.stderr,'actions:',actions
             for _action in actions:
                 theta = self.get_theta(action=_action, state=state)
                 assert len(theta) == len(state)
@@ -381,10 +506,16 @@ class SARSALFAAgent(Agent):
                     weight*feature
                     for weight, feature in zip(theta, state)
                 )
-                best = max(best, (q, _action))
-            q, action = best
+                #best = max(best, (q, _action))
+#                print>>sys.stderr, 'theta:', theta
+#                print>>sys.stderr, q, _action
+                best.add(score=q, obj=_action)
+            #q, action = best
+            q = best.score
+            action = best.obj
         else:
             # Otherwise explore something random.
+#            print>>sys.stderr,'explore'
             action = random.choice(actions)
             
             theta = self.get_theta(action=action, state=state)
@@ -394,9 +525,11 @@ class SARSALFAAgent(Agent):
                 for weight, feature in zip(theta, state)
             )
         
+        if action is None and actions:
+            raise Exception, 'No action found!'
+        
         # Record (state,action) tuple for later learning update.
-        self.history.append((state, action, q))
-#        self.history_best.append((state, best_action, best_q))
+        self.record_history((state, action, q))
         
         return action
         
@@ -428,13 +561,17 @@ class SARSALFAAgent(Agent):
             state = [1.0] + self.normalize_state(state)
         
         # Record feedback.
-        if replace_last:
+        if replace_last and not isinstance(self.history[-1], tuple):
             # Overwrite our last reward, since it was incorrect as our
             # opponent did something to effect it in hindsight.
-            assert not isinstance(self.history, tuple), self.history
+            assert not isinstance(self.history[-1], tuple), \
+                'Incorrect feedback replacement: %s' % (self.history[-5:],)
             self.history[-1] = feedback
             self.rewards[-1] = feedback
         else:
+            if self.history:
+                assert not isinstance(self.history[-1], float), \
+                    'Double feedback append.'
             self.history.append(feedback)
             self.rewards.append(feedback)
             
@@ -456,6 +593,7 @@ class SARSALFAAgent(Agent):
                     final_reward = self.rewards[-1]
                     hl = len(history)
                     discount = 1
+                    #print>>sys.stderr, 'history:',self.history[-10:]
                     for i in xrange(0, hl-2, 2):
                         # Iterate from most recent step to oldest.
                         (s0, a0, q0), r1, (s1, a1, q1) = self.history[hl-3-i:hl-i]
@@ -479,6 +617,7 @@ class SARSALFAAgent(Agent):
                         discount *= self.gamma*self.lambda_discount
             else:
                 # Update the weight for the last step.
+#                print 'history:',self.history
                 if end:
                     (s0, a0, q0), r1, (s1, a1, q1) = self.history[-3:]
                 else:
