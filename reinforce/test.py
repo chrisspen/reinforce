@@ -361,7 +361,7 @@ class Tests(unittest.TestCase):
     def test_xo_ann(self):
         player1 = xo.RandomPlayer()
         series = []
-        mult = 1
+        mult = 0.5
         games = int(100000*mult)
         players = []
         
@@ -389,6 +389,16 @@ class Tests(unittest.TestCase):
             lengths=[9, 81, 1],
             hiddenclass='TanhLayer',
             outclass='TanhLayer'))
+
+#        players.append(xo.ANNPlayer(
+#            lengths=[9, 1000, 1],
+#            hiddenclass='TanhLayer',
+#            outclass='TanhLayer'))
+#            
+#        players.append(xo.ANNPlayer(
+#            lengths=[9, 5890, 1],
+#            hiddenclass='TanhLayer',
+#            outclass='TanhLayer'))
             
         for player in players:
             reward_history = []
