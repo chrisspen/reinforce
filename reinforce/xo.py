@@ -5,6 +5,9 @@ The game Tic-Tac-Toe formatting as a reinforcement learning domain.
 import random
 import sys
 
+import pyximport; pyximport.install()
+import xo_fast
+
 import rl
 
 EMPTY = '.'
@@ -23,6 +26,53 @@ WINNING_COMBOS = (
     (0, 4, 8),
     (2, 4, 6),
 )
+
+
+def transform_board(b):
+    new_boards = [b]
+    
+    b = expand_board(b)
+    
+    # Flip-x.
+    new_boards.append(flatten_board([list(reversed(_)) for _ in b]))
+    
+    # Flip-y.
+    new_boards.append(flatten_board([list(_) for _ in list(reversed(b))]))
+    
+    #http://stackoverflow.com/q/42519/247542
+    # Rotate-90.
+    rot90 = [list(_) for _ in zip(*b[::-1])]
+    new_boards.append(flatten_board(rot90))
+    
+    # Rotate-180.
+    rot180 = [list(_) for _ in zip(*rot90[::-1])]
+    new_boards.append(flatten_board(rot180))
+    
+    # Rotate-270.
+    rot270 = [list(_) for _ in zip(*rot180[::-1])]
+    new_boards.append(flatten_board(rot270))
+    
+    # Transpose from top-left to bottom-right.
+    new_boards.append(flatten_board([list(_) for _ in zip(*b)]))
+    
+    # Transpose from top-right to bottom-left.
+    new_boards.append(flatten_board([list(_) for _ in list(reversed(rot90))]))
+    
+    return new_boards
+
+def flatten_board(b):
+    """
+    Converts a 2D list to 1D.
+    """
+    assert len(b) == 3 and len(b[0]) == 3
+    return b[0] + b[1] + b[2]
+    
+def expand_board(b):
+    """
+    Converts a 1D list to 2D.
+    """
+    assert len(b) == 9
+    return [b[0:3], b[3:6], b[6:9]]
 
 class Game(rl.Domain):
     """
@@ -211,5 +261,60 @@ class SARSALFAPlayer(Player, rl.SARSALFAAgent):
         """
         state = self.relativize_state(state)
         state = [self.LFA_KEY[_] for _ in state]
+        return state
+
+class ANNPlayer(Player, rl.ANNAgent):
+    """
+    Learns to play using an artificial neural network.
+    
+    Works by using the ANN to estimate the the expected reward after
+    performing each legal action and recommends the action corresponding
+    to the highest expected reward. 
+    """
+    
+    filename = 'models/ann-xo-player.yaml'
+    
+    symbol_to_int = {
+        US: +1,
+        EMPTY: 0,
+        THEM: -1,
+    }
+
+    def __init__(self, *args, **kwargs):
+        Player.__init__(self, *args, **kwargs)
+        rl.ANNAgent.__init__(self, *args, **kwargs)
+
+    def normalize_state(self, state):
+        """
+        Converts state into a list of numbers.
+        """
+        assert self.color is not None
+        
+        # Make the board relative to us.
+        if not (US in state or THEM in state):
+            state = self.relativize_state(state)
+        
+        # Convert to integers suitable for input into the ANN.
+        state = [self.symbol_to_int[_] for _ in state]
+        
+        # Convert one of 8 possible symmetric versions to the standard.
+        boards = sorted(xo_fast.transform_board(state))
+        state = boards[0]
+        
+        return state
+
+    def simulate_action(self, state, action):
+        """
+        Returns the expected next-state if the given action is performed
+        in the given state.
+        """
+#        print 'state0:',state,action
+        state = self.relativize_state(state)
+        invalid = set(state).difference([US,THEM,EMPTY])
+        assert not invalid, invalid
+        assert state[action] == EMPTY
+        state = list(state)
+        state[action] = US
+#        print 'state1:',state
         return state
         

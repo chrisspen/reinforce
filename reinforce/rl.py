@@ -194,7 +194,7 @@ class Agent(object):
     filename = 'models/agent.yaml'
     
     def __init__(self):
-        pass
+        self.best = False
     
     def reset(self):
         """
@@ -623,4 +623,163 @@ class SARSALFAAgent(Agent):
                 else:
                     (s0, a0, q0), r1, (s1, a1, q1) = self.history[-4:-1]
                 update_step(s0, a0, q0, r1, s1, a1, q1)
-                
+
+from pybrain.tools.shortcuts import buildNetwork
+from pybrain import structure as pybrain_structure
+#import TanhLayer, SoftmaxLayer, SigmoidLayer, GaussianLayer
+from pybrain.datasets import SupervisedDataSet
+from pybrain.supervised.trainers import BackpropTrainer
+
+class ANNAgent(Agent):
+    """
+    Uses a feed-forward artificial neural network to learn.
+    
+    epsilon := the amount by which the agent randomly explores at first
+    """
+    
+    def __init__(self,
+        lengths,
+        hiddenclass=None,
+        outclass=None,
+        epsilon=0.5,
+        lambda_decay=0.9,
+        alpha=0.01,
+        *args, **kwargs):
+            
+        super(ANNAgent, self).__init__(*args, **kwargs)
+        
+        self.hiddenclass = hiddenclass or 'SigmoidLayer'
+        hiddenclass = getattr(pybrain_structure, self.hiddenclass)
+        
+        self.outclass = outclass or 'SigmoidLayer'
+        outclass = getattr(pybrain_structure, self.outclass)
+        
+        self.lengths = lengths
+        self.network = buildNetwork(
+            *lengths,
+            hiddenclass=hiddenclass,
+            outclass=outclass)
+    
+        # The exploitation/exploration rate.
+        # 0=always exploit, 1=always explore
+        self._epsilon = self.epsilon = epsilon
+        self.epsilon_decay_factor = 0.5
+        
+        self.alpha = alpha
+        
+        # When training, this is how much the reward is diminished
+        # per history step. 
+        # 0=no propagation, only the last step updated
+        # 1=all steps updated equally
+        self.lambda_decay = lambda_decay
+        
+        self.episodes = 0
+        self.reset()
+    
+    @property
+    def name(self):
+        return 'ANN(alpha=%s, hidden=%i, hiddenclass=%s, outclass=%s)' % (
+            self.alpha,
+            self.lengths[1],
+            self.hiddenclass[:-5],
+            self.outclass[:-5],
+        )
+    
+    def __setstate__(self, d=None):
+        d = d or {}
+        self.__dict__.update(d)
+        
+    def __getstate__(self):
+        return dict(
+            alpha=self.alpha,
+            lengths=self.lengths,
+            network=self.network,
+            epsilon=self.epsilon,
+            hiddenclass=self.hiddenclass,
+            outclass=self.outclass,
+            epsilon_decay_factor=self.epsilon_decay_factor,
+            lambda_decay=self.lambda_decay,
+            episodes=self.episodes,
+        )
+        
+    def reset(self):
+        """
+        Clears episodic variables.
+        """
+        self.history = []
+        self.rewards = []
+        
+        # Increment our episode knowledge so we'll gradually stop exploring
+        # over time and use our learned policy.
+        self._epsilon = \
+            self.epsilon/(1+self.episodes*self.epsilon_decay_factor)
+        self.episodes += 1
+    
+    def normalize_state(self, state):
+        """
+        This should convert the state into a list of numbers that correspond
+        in length to the network's input layer.
+        """
+        raise NotImplementedError
+    
+    def simulate_action(self, state, action):
+        """
+        Returns the expected next-state if the given action is performed
+        in the given state.
+        """
+        raise NotImplementedError
+    
+    def get_action(self, state, actions):
+        """
+        Retrieves the agent's action for the given state.
+        """
+        
+        # Ensure input layer matches state vector.
+        assert len(state) == self.lengths[0]
+        
+        # Select action according to an epsilon-greedy strategy.
+        if self.best or random.random() > self._epsilon:
+            # Exploit our knowledge by activating network for each action
+            # and using the action that corresponds to the highest Q-value.
+            best = (-1e9999999, None, None)
+            for action in actions:
+                next_state = self.simulate_action(state, action)
+                next_state = self.normalize_state(next_state)
+                q_value = self.network.activate(next_state)
+                best = max(best, (q_value, action, next_state))
+            best_q, best_action, best_state = best
+            action = best_action
+        else:
+            # Otherwise explore something random.
+            action = random.choice(actions)
+            best_state = self.simulate_action(state, action)
+            best_state = self.normalize_state(best_state)
+        
+        # Record (state,action) tuple for later learning update.
+        self.history.append(best_state)
+        
+        return action
+    
+    def reinforce(self, feedback, state=None, replace_last=False, end=None):
+        """
+        Processes a feedback signal (e.g. reward or punishment).
+        """
+        
+        if not end:
+            return
+        
+        self.rewards.append(feedback)
+        
+        # Build training set.
+        ds = SupervisedDataSet(inp=9, target=1)
+        
+        r0 = feedback
+        for normalized_state in reversed(self.history):
+#            print 'sample:',normalized_state,r0
+            ds.addSample(normalized_state, (r0,))
+            r0 *= self.lambda_decay
+        
+        trainer = BackpropTrainer(
+            self.network, ds, learningrate=self.alpha)
+        trainer.train()
+        

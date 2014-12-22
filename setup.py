@@ -9,6 +9,8 @@ def get_reqs(test=False):
     # it to the requirements
     reqs = [
         'PyYaml',
+        'PyBrain',#?
+        'cython',#?
     ]
     if test:
         # These take a long time to compile, and are only used for testing,
