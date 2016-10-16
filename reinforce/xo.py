@@ -5,10 +5,12 @@ The game Tic-Tac-Toe formatting as a reinforcement learning domain.
 import random
 import sys
 
-import pyximport; pyximport.install()
-import xo_fast
+# pylint: disable=C0413
 
-import rl
+import pyximport; pyximport.install() # pylint: disable=C0321
+
+from . import xo_fast # pylint: disable=E0611
+from . import rl
 
 EMPTY = '.'
 X = 'x'
@@ -169,7 +171,7 @@ class Game(rl.Domain):
                 if result == color:
                     # Player won.
                     feedback = +1
-                elif result == True or result == False:
+                elif result or not result:
                     # Player drew or game ongoing.
                     feedback = 0
                 else:
@@ -310,11 +312,10 @@ class ANNPlayer(Player, rl.ANNAgent):
         """
 #        print 'state0:',state,action
         state = self.relativize_state(state)
-        invalid = set(state).difference([US,THEM,EMPTY])
+        invalid = set(state).difference([US, THEM, EMPTY])
         assert not invalid, invalid
         assert state[action] == EMPTY
         state = list(state)
         state[action] = US
 #        print 'state1:',state
         return state
-        

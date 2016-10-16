@@ -5,6 +5,12 @@ import random
 
 import yaml
 
+from pybrain.tools.shortcuts import buildNetwork
+from pybrain import structure as pybrain_structure
+#import TanhLayer, SoftmaxLayer, SigmoidLayer, GaussianLayer
+from pybrain.datasets import SupervisedDataSet
+from pybrain.supervised.trainers import BackpropTrainer
+
 class Distribution(object):
     """
     Tracks statistics for a stream of discrete events.
@@ -233,7 +239,6 @@ class Agent(object):
         except Exception as e:
             if ignore_errors:
                 print e
-                pass
         player.__setstate__(d)
         return player
     
@@ -624,12 +629,6 @@ class SARSALFAAgent(Agent):
                     (s0, a0, q0), r1, (s1, a1, q1) = self.history[-4:-1]
                 update_step(s0, a0, q0, r1, s1, a1, q1)
 
-from pybrain.tools.shortcuts import buildNetwork
-from pybrain import structure as pybrain_structure
-#import TanhLayer, SoftmaxLayer, SigmoidLayer, GaussianLayer
-from pybrain.datasets import SupervisedDataSet
-from pybrain.supervised.trainers import BackpropTrainer
-
 class ANNAgent(Agent):
     """
     Uses a feed-forward artificial neural network to learn.
@@ -648,6 +647,7 @@ class ANNAgent(Agent):
             
         super(ANNAgent, self).__init__(*args, **kwargs)
         
+        #http://pybrain.org/docs/api/structure/modules.html
         self.hiddenclass = hiddenclass or 'SigmoidLayer'
         hiddenclass = getattr(pybrain_structure, self.hiddenclass)
         
@@ -771,7 +771,8 @@ class ANNAgent(Agent):
         self.rewards.append(feedback)
         
         # Build training set.
-        ds = SupervisedDataSet(inp=9, target=1)
+        #ds = SupervisedDataSet(inp=9, target=1)
+        ds = SupervisedDataSet(inp=self.lengths[0], target=self.lengths[-1])
         
         r0 = feedback
         for normalized_state in reversed(self.history):
@@ -782,4 +783,63 @@ class ANNAgent(Agent):
         trainer = BackpropTrainer(
             self.network, ds, learningrate=self.alpha)
         trainer.train()
+
+class PIDNN(ANNAgent):
+    """
+    A PID controller using a neural network to learn components.
+    
+    http://molefrog.com/pidnn-talk
+    """
+    
+    def __init__(self, *args, **kwargs):
+        lengths = [2, 3, 1]
+        super(PIDNN, self).__init__(lengths=lengths, *args, **kwargs)
+        self._target = 0
+        self._feedback = 0
+
+    def get_action(self, *args, **kwargs):
+        raise NotImplementedError
         
+    @property
+    def name(self):
+        return 'PIDNN(alpha=%s, hidden=%i, hiddenclass=%s, outclass=%s)' % (
+            self.alpha,
+            self.lengths[1],
+            self.hiddenclass[:-5],
+            self.outclass[:-5],
+        )
+        
+    @property
+    def target(self):
+        return self._target
+         
+    @target.setter
+    def target(self, v):
+        self._target = v
+
+    @property
+    def feedback(self):
+        return self._feedback
+        
+    @feedback.setter
+    def feedback(self, v):
+        self._feedback = v
+
+    def get_output(self):
+        
+        inputs = [
+            self._target, # desired system output
+            self._feedback, # last system output
+        ]
+        
+        output = self.network.activate(inputs)
+        
+        ds = SupervisedDataSet(inp=self.lengths[0], target=self.lengths[-1])
+        ds.addSample(inputs, self._target)
+        
+        trainer = BackpropTrainer(self.network, ds, learningrate=self.alpha)
+        trainer.train()
+        
+        #self._feedback = output
+        
+        return output
