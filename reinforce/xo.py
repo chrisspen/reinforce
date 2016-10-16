@@ -9,8 +9,8 @@ import sys
 
 import pyximport; pyximport.install() # pylint: disable=C0321
 
-from . import xo_fast # pylint: disable=E0611
-from . import rl
+import xo_fast # pylint: disable=E0611
+from reinforce import rl
 
 EMPTY = '.'
 X = 'x'

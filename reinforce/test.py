@@ -13,8 +13,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.interpolate import spline
 
-from . import rl
-from . import xo
+from reinforce import rl
+from reinforce import xo
 
 matplotlib.rcParams['backend'] = "Qt4Agg"
 
