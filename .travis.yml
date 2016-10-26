@@ -11,4 +11,5 @@ script:
 -   pylint --version
 -   tox --version
 -   ./pep8.sh
+-   sudo apt-get install python-matplotlib
 -   tox

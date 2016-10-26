@@ -561,7 +561,7 @@ class SARSALFAAgent(Agent):
             delta = r1 + self.gamma*q1 - q0
             theta0 = self.get_theta(action=a0, state=s0)
             assert len(s0) == len(theta0)
-            for i in range(len(s0)):
+            for i, _ in enumerate(s0):
                 # wi ← wi + ηδFi(s,a)
                 theta0[i] = theta0[i] + self.alpha*delta*s0[i]*discount
             self.set_theta(action=a0, state=s0, theta=theta0)
