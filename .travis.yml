@@ -4,5 +4,7 @@ python:
 install:
 -   pip install tox pylint
 script:
+-   python --version
+-   pylint --version
 -   ./pep8.sh
 -   tox

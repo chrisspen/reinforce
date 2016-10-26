@@ -8,10 +8,11 @@ import time
 import unittest
 
 import matplotlib
-
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.interpolate import spline
+
+from six.moves import range
 
 from reinforce import rl
 from reinforce import xo
@@ -36,7 +37,7 @@ class Tests(unittest.TestCase):
         player2 = xo.SARSAPlayer()
         player2.epsilon_decay_factor = 0
         reward_history = []
-        for i in xrange(games):
+        for i in range(games):
             if not i % 10 or i+1 == games:
                 sys.stdout.write('\rGame %i' % i)
                 sys.stdout.flush()
@@ -50,7 +51,7 @@ class Tests(unittest.TestCase):
         player2 = xo.SARSAPlayer()
         player2.epsilon_decay_factor = 0.75 #higher=epsilon decays faster
         reward_history = []
-        for i in xrange(games):
+        for i in range(games):
             if not i % 10 or i+1 == games:
                 sys.stdout.write('\rGame %i' % i)
                 sys.stdout.flush()
@@ -65,7 +66,7 @@ class Tests(unittest.TestCase):
         player2 = xo.SARSAPlayer()
         player2.epsilon_decay_factor = 0.25
         reward_history = []
-        for i in xrange(games):
+        for i in range(games):
             if not i % 10 or i+1 == games:
                 sys.stdout.write('\rGame %i' % i)
                 sys.stdout.flush()
@@ -80,7 +81,7 @@ class Tests(unittest.TestCase):
         player2 = xo.SARSAPlayer()
         player2.epsilon_decay_factor = 0.01
         reward_history = []
-        for i in xrange(games):
+        for i in range(games):
             if not i % 10 or i+1 == games:
                 sys.stdout.write('\rGame %i' % i)
                 sys.stdout.flush()
@@ -95,10 +96,10 @@ class Tests(unittest.TestCase):
         buckets = 10*mult
         ipb = games/buckets
         for label, serie in series:
-            x = np.array(xrange(buckets))
+            x = np.array(range(buckets))
             y = [
                 sum(serie[i*ipb:i*ipb+ipb])/float(ipb)
-                for i in xrange(buckets)
+                for i in range(buckets)
             ]
             x_new = np.linspace(x.min(), x.max(), 300)
             print('Creating spline...')
@@ -134,7 +135,7 @@ class Tests(unittest.TestCase):
         player2 = xo.SARSALFAPlayer()
         player2.epsilon_decay_factor = 0 # no gradual focus on exploitation
         reward_history = []
-        for i in xrange(games):
+        for i in range(games):
             if not i % 10 or i+1 == games:
                 sys.stdout.write('\rGame %i' % i)
                 sys.stdout.flush()
@@ -148,7 +149,7 @@ class Tests(unittest.TestCase):
         player2 = xo.SARSALFAPlayer()
         player2.epsilon_decay_factor = 0.5
         reward_history = []
-        for i in xrange(games):
+        for i in range(games):
             if not i % 10 or i+1 == games:
                 sys.stdout.write('\rGame %i' % i)
                 sys.stdout.flush()
@@ -164,7 +165,7 @@ class Tests(unittest.TestCase):
         player2 = xo.SARSAPlayer()
         player2.epsilon_decay_factor = 0.5
         reward_history = []
-        for i in xrange(games):
+        for i in range(games):
             if not i % 10 or i+1 == games:
                 sys.stdout.write('\rGame %i' % i)
                 sys.stdout.flush()
@@ -180,10 +181,10 @@ class Tests(unittest.TestCase):
         buckets = 10*mult
         ipb = games/buckets
         for label, serie in series:
-            x = np.array(xrange(buckets))
+            x = np.array(range(buckets))
             y = [
                 sum(serie[i*ipb:i*ipb+ipb])/float(ipb)
-                for i in xrange(buckets)
+                for i in range(buckets)
             ]
             x_new = np.linspace(x.min(), x.max(), 300)
             print('Creating spline...')
@@ -212,7 +213,7 @@ class Tests(unittest.TestCase):
         player2.use_traces = True
         player2.lambda_discount = 0.5
         reward_history = []
-        for i in xrange(games):
+        for i in range(games):
             if not i % 10 or i+1 == games:
                 sys.stdout.write('\rGame %i' % i)
                 sys.stdout.flush()
@@ -228,7 +229,7 @@ class Tests(unittest.TestCase):
         player2.lambda_discount = 0.5
         player2.every_step = True
         reward_history = []
-        for i in xrange(games):
+        for i in range(games):
             if not i % 10 or i+1 == games:
                 sys.stdout.write('\rGame %i' % i)
                 sys.stdout.flush()
@@ -245,7 +246,7 @@ class Tests(unittest.TestCase):
         player2.use_traces = True
         player2.lambda_discount = 0.9
         reward_history = []
-        for i in xrange(games):
+        for i in range(games):
             if not i % 10 or i+1 == games:
                 sys.stdout.write('\rGame %i' % i)
                 sys.stdout.flush()
@@ -263,7 +264,7 @@ class Tests(unittest.TestCase):
         player2.lambda_discount = 0.9
         player2.every_step = True
         reward_history = []
-        for i in xrange(games):
+        for i in range(games):
             if not i % 10 or i+1 == games:
                 sys.stdout.write('\rGame %i' % i)
                 sys.stdout.flush()
@@ -279,7 +280,7 @@ class Tests(unittest.TestCase):
         player2.epsilon_decay_factor = 0.5
         player2.use_traces = False
         reward_history = []
-        for i in xrange(games):
+        for i in range(games):
             if not i % 10 or i+1 == games:
                 sys.stdout.write('\rGame %i' % i)
                 sys.stdout.flush()
@@ -293,10 +294,10 @@ class Tests(unittest.TestCase):
         buckets = int(10*mult)
         ipb = games/buckets
         for label, serie in series:
-            x = np.array(xrange(buckets))
+            x = np.array(range(buckets))
             y = [
                 sum(serie[i*ipb:i*ipb+ipb])/float(ipb)
-                for i in xrange(buckets)
+                for i in range(buckets)
             ]
             x_new = np.linspace(x.min(), x.max(), 300)
             print('Creating spline...')
@@ -328,7 +329,7 @@ class Tests(unittest.TestCase):
         runs = 100000
 
         t0 = time.clock()
-        for _ in xrange(runs):
+        for _ in range(runs):
             boards_slow = xo.transform_board(board0)
         td_slow = time.clock() - t0
         print('slow.td:', td_slow)
@@ -342,7 +343,7 @@ class Tests(unittest.TestCase):
             self.assertEqual(actual_board, expected_board)
         
         t0 = time.clock()
-        for _ in xrange(runs):
+        for _ in range(runs):
             boards_fast = xo.xo_fast.transform_board(board0)
         td_fast = time.clock() - t0
         print('fast.td:', td_fast)
@@ -436,7 +437,7 @@ class Tests(unittest.TestCase):
             
         for player in players:
             reward_history = []
-            for i in xrange(games):
+            for i in range(games):
                 if not i % 10 or i+1 == games:
                     sys.stdout.write('\rGame %i of %i %.2f%%' \
                         % (i+1, games, float(i+1)/games*100))
@@ -451,10 +452,10 @@ class Tests(unittest.TestCase):
         buckets = int(10*mult)
         ipb = games/buckets
         for label, serie in series:
-            x = np.array(xrange(buckets))
+            x = np.array(range(buckets))
             y = [
                 sum(serie[i*ipb:i*ipb+ipb])/float(ipb)
-                for i in xrange(buckets)
+                for i in range(buckets)
             ]
             x_new = np.linspace(x.min(), x.max(), 300)
             print('Creating spline...')
@@ -474,7 +475,7 @@ class Tests(unittest.TestCase):
             player.best = True
             reward_history = []
             games2 = int(games*0.1)
-            for i in xrange(games2):
+            for i in range(games2):
                 if not i % 10 or i+1 == games2:
                     sys.stdout.write('\rGame %i of %i %.2f%%' \
                         % (i+1, games2, float(i+1)/games2*100))
@@ -497,7 +498,7 @@ class Tests(unittest.TestCase):
         )
         controller.target = 1
         last_output = 0
-        for i in xrange(20000):
+        for i in range(20000):
             output = controller.get_output()
             controller.feedback = output
             error = abs(controller.target - output)

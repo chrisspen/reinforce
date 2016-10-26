@@ -2,6 +2,8 @@
 """
 The game Tic-Tac-Toe formatting as a reinforcement learning domain.
 """
+from __future__ import print_function
+
 import random
 import sys
 
@@ -148,8 +150,8 @@ class Game(rl.Domain):
         while not self.is_over():
             for color, player in self.players:
                 if verbose:
-                    print self.pretty_board
-                    print
+                    print(self.pretty_board)
+                    print()
                 
                 # Get player action.
                 action = player.get_action(
@@ -186,8 +188,8 @@ class Game(rl.Domain):
                 # immediately and then exit.
                 if end:
                     if verbose:
-                        print self.pretty_board
-                        print
+                        print(self.pretty_board)
+                        print()
                     self.get_other_player(player).reinforce(
                         feedback=-feedback,
                         state=list(self.board),

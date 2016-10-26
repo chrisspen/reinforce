@@ -1,3 +1,4 @@
 PyYaml
 PyBrain
 cython
+six

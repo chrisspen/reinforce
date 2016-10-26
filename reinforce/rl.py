@@ -165,7 +165,7 @@ def weighted_choice(choices, get_total=None, get_weight=None):
         else:
             c, w = c
         if w < 0:
-            raise Exception, 'Invalid negative weight: %s' % (w,)
+            raise Exception('Invalid negative weight: %s' % (w,))
         if upto + w >= r:
             return c
         upto += w
