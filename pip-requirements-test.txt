@@ -1,4 +1,4 @@
-PySide
-matplotlib
-numpy
-scipy
+#PySide
+#matplotlib
+#numpy
+#scipy

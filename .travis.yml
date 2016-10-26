@@ -3,6 +3,7 @@ python:
 -   "3.5"
 install:
 -   pip install tox pylint
+-   sudo apt-get install python-matplotlib python3-matplotlib python-scipy python3-scipy python-numpy python3-numpy python-pyside python3-pyside
 script:
 -   python --version
 -   pylint --version

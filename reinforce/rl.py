@@ -169,7 +169,7 @@ def weighted_choice(choices, get_total=None, get_weight=None):
         if upto + w >= r:
             return c
         upto += w
-    raise Exception, 'Unable to make weighted choice: total=%s, choices=%s' % (total, choices,)
+    raise Exception('Unable to make weighted choice: total=%s, choices=%s' % (total, choices))
 
 class Domain(object):
     """
@@ -531,7 +531,7 @@ class SARSALFAAgent(Agent):
             )
         
         if action is None and actions:
-            raise Exception, 'No action found!'
+            raise Exception('No action found!')
         
         # Record (state,action) tuple for later learning update.
         self.record_history((state, action, q))

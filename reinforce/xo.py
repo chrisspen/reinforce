@@ -158,8 +158,8 @@ class Game(rl.Domain):
                     state=list(self.board),
                     actions=list(self.empty))
                 if action not in self.empty:
-                    raise Exception, ('Player %s returned invalid action '
-                        '"%s" in state "%s"') % (player, action, self.board)
+                    raise Exception(('Player %s returned invalid action '
+                        '"%s" in state "%s"') % (player, action, self.board))
                 
                 # Update state.
                 self.board[action] = color

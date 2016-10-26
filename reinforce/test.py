@@ -14,10 +14,14 @@ from scipy.interpolate import spline
 
 from six.moves import range
 
-from reinforce import rl
-from reinforce import xo
+import rl
+import xo
 
-matplotlib.rcParams['backend'] = "Qt4Agg"
+# Force matplotlib to not use any Xwindows backend.
+# matplotlib.rcParams['backend'] = "Qt4Agg"
+matplotlib.use('Agg')
+
+GRAPH = int(os.environ.get('GRAPH', 0))
 
 class Tests(unittest.TestCase):
     
@@ -93,25 +97,26 @@ class Tests(unittest.TestCase):
             % player2.epsilon_decay_factor, reward_history))
         
         # Graph progress.
-        buckets = 10*mult
-        ipb = games/buckets
-        for label, serie in series:
-            x = np.array(range(buckets))
-            y = [
-                sum(serie[i*ipb:i*ipb+ipb])/float(ipb)
-                for i in range(buckets)
-            ]
-            x_new = np.linspace(x.min(), x.max(), 300)
-            print('Creating spline...')
-            y_smooth = spline(x, y, x_new)
-            print('Plotting...')
-            plt.plot(x_new, y_smooth, label=label)
-        legend = plt.legend(loc='best', shadow=True)
-        plt.title('XO SARSA Player Against Random Player')
-        fig1 = plt.gcf() # Must be before show() so we can savefig().
-        plt.show()
-        plt.draw()
-        fig1.savefig(self.images_dir+'/sarsa-xo-progress.png', dpi=100)
+        if GRAPH:
+            buckets = 10*mult
+            ipb = games/buckets
+            for label, serie in series:
+                x = np.array(range(buckets))
+                y = [
+                    sum(serie[i*ipb:i*ipb+ipb])/float(ipb)
+                    for i in range(buckets)
+                ]
+                x_new = np.linspace(x.min(), x.max(), 300)
+                print('Creating spline...')
+                y_smooth = spline(x, y, x_new)
+                print('Plotting...')
+                plt.plot(x_new, y_smooth, label=label)
+            legend = plt.legend(loc='best', shadow=True)
+            plt.title('XO SARSA Player Against Random Player')
+            fig1 = plt.gcf() # Must be before show() so we can savefig().
+            plt.show()
+            plt.draw()
+            fig1.savefig(self.images_dir+'/sarsa-xo-progress.png', dpi=100)
 
     def test_xo_lfa(self):
         """
@@ -178,25 +183,26 @@ class Tests(unittest.TestCase):
             % player2.epsilon_decay_factor, reward_history))
             
         # Graph progress.
-        buckets = 10*mult
-        ipb = games/buckets
-        for label, serie in series:
-            x = np.array(range(buckets))
-            y = [
-                sum(serie[i*ipb:i*ipb+ipb])/float(ipb)
-                for i in range(buckets)
-            ]
-            x_new = np.linspace(x.min(), x.max(), 300)
-            print('Creating spline...')
-            y_smooth = spline(x, y, x_new)
-            print('Plotting...')
-            plt.plot(x_new, y_smooth, label=label)
-        legend = plt.legend(loc='best', shadow=True)
-        plt.title('XO SARSA-LFA Player Against Random Player')
-        fig1 = plt.gcf() # Must be before show() so we can savefig().
-        plt.show()
-        plt.draw()
-        fig1.savefig(self.images_dir+'/sarsalfa-xo-progress.png', dpi=100)
+        if GRAPH:
+            buckets = 10*mult
+            ipb = games/buckets
+            for label, serie in series:
+                x = np.array(range(buckets))
+                y = [
+                    sum(serie[i*ipb:i*ipb+ipb])/float(ipb)
+                    for i in range(buckets)
+                ]
+                x_new = np.linspace(x.min(), x.max(), 300)
+                print('Creating spline...')
+                y_smooth = spline(x, y, x_new)
+                print('Plotting...')
+                plt.plot(x_new, y_smooth, label=label)
+            legend = plt.legend(loc='best', shadow=True)
+            plt.title('XO SARSA-LFA Player Against Random Player')
+            fig1 = plt.gcf() # Must be before show() so we can savefig().
+            plt.show()
+            plt.draw()
+            fig1.savefig(self.images_dir+'/sarsalfa-xo-progress.png', dpi=100)
 
     def test_xo_lambda(self):
         """
@@ -291,25 +297,26 @@ class Tests(unittest.TestCase):
         series.append(('SARSA-LFA (non-lambda)', reward_history))
         
         # Graph progress.
-        buckets = int(10*mult)
-        ipb = games/buckets
-        for label, serie in series:
-            x = np.array(range(buckets))
-            y = [
-                sum(serie[i*ipb:i*ipb+ipb])/float(ipb)
-                for i in range(buckets)
-            ]
-            x_new = np.linspace(x.min(), x.max(), 300)
-            print('Creating spline...')
-            y_smooth = spline(x, y, x_new)
-            print('Plotting...')
-            plt.plot(x_new, y_smooth, label=label)
-        legend = plt.legend(loc='best', shadow=True)
-        plt.title('XO SARSA-LFA(Lambda) Player Against Random Player')
-        fig1 = plt.gcf() # Must be before show() so we can savefig().
-        plt.show()
-        plt.draw()
-        fig1.savefig(self.images_dir+'/sarsalfa-xo-lambda-progress.png', dpi=100)
+        if GRAPH:
+            buckets = int(10*mult)
+            ipb = games/buckets
+            for label, serie in series:
+                x = np.array(range(buckets))
+                y = [
+                    sum(serie[i*ipb:i*ipb+ipb])/float(ipb)
+                    for i in range(buckets)
+                ]
+                x_new = np.linspace(x.min(), x.max(), 300)
+                print('Creating spline...')
+                y_smooth = spline(x, y, x_new)
+                print('Plotting...')
+                plt.plot(x_new, y_smooth, label=label)
+            legend = plt.legend(loc='best', shadow=True)
+            plt.title('XO SARSA-LFA(Lambda) Player Against Random Player')
+            fig1 = plt.gcf() # Must be before show() so we can savefig().
+            plt.show()
+            plt.draw()
+            fig1.savefig(self.images_dir+'/sarsalfa-xo-lambda-progress.png', dpi=100)
 
     def test_xo_fast(self):
         
@@ -449,26 +456,27 @@ class Tests(unittest.TestCase):
             series.append((player.name, reward_history))
         
         # Graph progress.
-        buckets = int(10*mult)
-        ipb = games/buckets
-        for label, serie in series:
-            x = np.array(range(buckets))
-            y = [
-                sum(serie[i*ipb:i*ipb+ipb])/float(ipb)
-                for i in range(buckets)
-            ]
-            x_new = np.linspace(x.min(), x.max(), 300)
-            print('Creating spline...')
-            y_smooth = spline(x, y, x_new)
-            print('Plotting...')
-            plt.plot(x_new, y_smooth, label=label)
-        legend = plt.legend(loc='best', shadow=True)
-        plt.title('XO ANN Player Against Random Player')
-        fig1 = plt.gcf() # Must be before show() so we can savefig().
-        plt.show()
-        plt.draw()
-        fig1.savefig(
-            self.images_dir + '/ann-xo-training-progress.png', dpi=100)
+        if GRAPH:
+            buckets = int(10*mult)
+            ipb = games/buckets
+            for label, serie in series:
+                x = np.array(range(buckets))
+                y = [
+                    sum(serie[i*ipb:i*ipb+ipb])/float(ipb)
+                    for i in range(buckets)
+                ]
+                x_new = np.linspace(x.min(), x.max(), 300)
+                print('Creating spline...')
+                y_smooth = spline(x, y, x_new)
+                print('Plotting...')
+                plt.plot(x_new, y_smooth, label=label)
+            legend = plt.legend(loc='best', shadow=True)
+            plt.title('XO ANN Player Against Random Player')
+            fig1 = plt.gcf() # Must be before show() so we can savefig().
+            plt.show()
+            plt.draw()
+            fig1.savefig(
+                self.images_dir + '/ann-xo-training-progress.png', dpi=100)
         
         # Play at best.
         for player in players:
