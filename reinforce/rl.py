@@ -633,6 +633,14 @@ class ANNAgent(Agent):
     """
     Uses a feed-forward artificial neural network to learn.
     
+    Works by using the ANN as a function approximator of the Q-table,
+    the lookup estimates the reward received in each state.
+    
+    So this doesn't directly associate actions to rewards.
+    Instead, it associates states to rewards, and uses its transition model
+    to find all next possible states, and return the action associated with the state
+    with the highest Q-value.
+    
     epsilon := the amount by which the agent randomly explores at first
     """
     
@@ -763,6 +771,13 @@ class ANNAgent(Agent):
     def reinforce(self, feedback, state=None, replace_last=False, end=None):
         """
         Processes a feedback signal (e.g. reward or punishment).
+        
+        Applies a feedback to every state in the episode decayed proportionally to how
+        long ago the action happened.
+        
+        The network will be taught to associate the state right before the feedback
+        with the feedback most strongly, whereas a state at the beginning of the episode
+        will have a very weak association.
         """
         
         if not end:
