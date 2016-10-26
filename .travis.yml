@@ -1,6 +1,6 @@
 language: python
 python:
--   "3.5"
+-   "2.7"
 install:
 -   pip install tox pylint
 # python3* packages are not supported by the stock Ubuntu image Travis uses.
