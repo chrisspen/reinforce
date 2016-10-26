@@ -9,5 +9,6 @@ install:
 script:
 -   python --version
 -   pylint --version
+-   tox --version
 -   ./pep8.sh
 -   tox

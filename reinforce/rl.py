@@ -6,6 +6,8 @@ import sys
 import random
 
 import yaml
+import six
+from six.moves import range
 
 from pybrain.tools.shortcuts import buildNetwork
 from pybrain import structure as pybrain_structure
@@ -246,7 +248,7 @@ class Agent(object):
     
     def save(self, fout=None):
         fout = fout or self.filename
-        if isinstance(fout, basestring):
+        if isinstance(fout, six.string_types):
             fout = open(fout, 'w')
         yaml.dump(self.__getstate__(), fout)
 
@@ -559,7 +561,7 @@ class SARSALFAAgent(Agent):
             delta = r1 + self.gamma*q1 - q0
             theta0 = self.get_theta(action=a0, state=s0)
             assert len(s0) == len(theta0)
-            for i in xrange(len(s0)):
+            for i in range(len(s0)):
                 # wi ← wi + ηδFi(s,a)
                 theta0[i] = theta0[i] + self.alpha*delta*s0[i]*discount
             self.set_theta(action=a0, state=s0, theta=theta0)
@@ -601,7 +603,7 @@ class SARSALFAAgent(Agent):
                     hl = len(history)
                     discount = 1
                     #print>>sys.stderr, 'history:',self.history[-10:]
-                    for i in xrange(0, hl-2, 2):
+                    for i in range(0, hl-2, 2):
                         # Iterate from most recent step to oldest.
                         (s0, a0, q0), r1, (s1, a1, q1) = self.history[hl-3-i:hl-i]
                         #update_step(s0, a0, q0, r1, s1, a1, q1)
@@ -614,7 +616,7 @@ class SARSALFAAgent(Agent):
                     final_reward = self.rewards[-1]
                     hl = len(history)
                     discount = 1
-                    for i in xrange(0, hl-2, 2):
+                    for i in range(0, hl-2, 2):
                         # Iterate from most recent step to oldest.
                         (s0, a0, q0), r1, (s1, a1, q1) = self.history[hl-3-i:hl-i]
                         #update_step(s0, a0, q0, r1, s1, a1, q1)
