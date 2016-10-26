@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import print_function
+
 import os
 import sys
 import random
@@ -238,7 +240,7 @@ class Agent(object):
             d = yaml.load(open(fn))
         except Exception as e:
             if ignore_errors:
-                print e
+                print(e)
         player.__setstate__(d)
         return player
     

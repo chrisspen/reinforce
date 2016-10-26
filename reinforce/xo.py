@@ -12,7 +12,7 @@ import sys
 import pyximport; pyximport.install() # pylint: disable=C0321
 
 import xo_fast # pylint: disable=E0611
-from reinforce import rl
+import rl
 
 EMPTY = '.'
 X = 'x'
