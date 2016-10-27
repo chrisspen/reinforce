@@ -7,6 +7,8 @@ install:
 #-   sudo apt-get install python-matplotlib python3-matplotlib python-scipy python3-scipy python-numpy python3-numpy python-pyside python3-pyside
 -   sudo apt-get install python-matplotlib python-scipy python-numpy python-pyside
 script:
+-   which tox
+-   python -c "import matplotlib"
 -   python --version
 -   pylint --version
 -   tox --version
