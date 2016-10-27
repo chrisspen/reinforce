@@ -1,17 +1,25 @@
 language: python
 python:
--   "2.7"
+  - 2.7
+notifications:
+  email: false
+
+# Setup anaconda
+before_install:
+  - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+  - chmod +x miniconda.sh
+  - ./miniconda.sh -b
+  - export PATH=/home/travis/miniconda/bin:$PATH
+  - conda update --yes conda
+  # The next couple lines fix a crash with multiprocessing on Travis and are not specific to using Miniconda
+  - sudo rm -rf /dev/shm
+  - sudo ln -s /run/shm /dev/shm
+# Install packages
 install:
--   pip install tox pylint
-# python3* packages are not supported by the stock Ubuntu image Travis uses.
-#-   sudo apt-get install python-matplotlib python3-matplotlib python-scipy python3-scipy python-numpy python3-numpy python-pyside python3-pyside
--   sudo apt-get install python-matplotlib python-scipy python-numpy python-pyside
+  - conda install --yes python=$TRAVIS_PYTHON_VERSION numpy scipy matplotlib
+  - pip install tox pylint
+
+# Run test
 script:
--   which tox
--   python -c "import matplotlib"
--   python --version
--   pylint --version
--   tox --version
--   ./pep8.sh
--   sudo apt-get install python-matplotlib
--   tox
+  - ./pep8.sh
+  - tox
