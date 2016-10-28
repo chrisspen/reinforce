@@ -14,8 +14,8 @@ from scipy.interpolate import spline
 
 from six.moves import range
 
-from . import rl
-from . import xo
+from reinforce import rl
+from reinforce import xo
 
 # Force matplotlib to not use any Xwindows backend.
 # matplotlib.rcParams['backend'] = "Qt4Agg"
