@@ -4,8 +4,6 @@ python:
 -   3.5
 
 install:
--   pip --version
--   pip install --only-binary=numpy,scipy,matplotlib numpy scipy matplotlib
 -   pip install tox pylint
 
 # Run test

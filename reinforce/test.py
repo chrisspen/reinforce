@@ -6,6 +6,7 @@ import os
 import sys
 import time
 import unittest
+import inspect
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -515,6 +516,20 @@ class Tests(unittest.TestCase):
         print('error[0]:', error[0])
         self.assertTrue(error[0] < 0.003)
 
+    def test_imports(self):
+        """
+        This is mainly to confirm the virtualenv behavior in tox/travis,
+        which sometimes do strange things.
+        """
+        import matplotlib
+        import numpy
+        import scipy
+        packages = [matplotlib, numpy, scipy]
+        for package in packages:
+            fn = inspect.getsourcefile(package)
+            print('%s: %s' % (package.__name__, fn))
+            self.assertTrue('.tox' in fn)
+        
 if __name__ == '__main__':
     
     # Run a single test case like:
