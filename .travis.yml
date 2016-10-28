@@ -1,12 +1,11 @@
 # Note, Travis-CI uses Ubuntu 12, so any system packages it uses will be ancient.
 language: python
 python:
--   "2.7_with_system_site_packages"
-
-before_install:
--   sudo apt-get install -qq python-numpy python-scipy python-matplotlib
+-   3.5
 
 install:
+-   pip --version
+-   pip install --only-binary=numpy,scipy,matplotlib numpy scipy matplotlib
 -   pip install tox pylint
 
 # Run test
