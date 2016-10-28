@@ -1,26 +1,17 @@
 language: python
 python:
-  - 2.7
-notifications:
-  email: false
+-   2.7
 
-# Setup anaconda
+virtualenv:
+    system_site_packages: true
+
 before_install:
-  - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
-  - chmod +x miniconda.sh
-  - ./miniconda.sh -b
-  #- export PATH=/home/travis/miniconda/bin:$PATH
-  - export PATH=/home/travis/miniconda2/bin:$PATH
-  - conda update --yes conda
-  # The next couple lines fix a crash with multiprocessing on Travis and are not specific to using Miniconda
-  - sudo rm -rf /dev/shm
-  - sudo ln -s /run/shm /dev/shm
-# Install packages
+-   sudo apt-get install -qq python-numpy python-scipy python-matplotlib
+
 install:
-  - conda install --yes python=$TRAVIS_PYTHON_VERSION numpy scipy matplotlib
-  - pip install tox pylint
+-   pip install tox pylint
 
 # Run test
 script:
-  - ./pep8.sh
-  - tox
+-   ./pep8.sh
+-   tox
