@@ -11,6 +11,7 @@ import inspect
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
+import scipy
 from scipy.interpolate import spline
 
 from six.moves import range
@@ -521,10 +522,7 @@ class Tests(unittest.TestCase):
         This is mainly to confirm the virtualenv behavior in tox/travis,
         which sometimes do strange things.
         """
-        import matplotlib
-        import numpy
-        import scipy
-        packages = [matplotlib, numpy, scipy]
+        packages = [matplotlib, np, scipy]
         for package in packages:
             fn = inspect.getsourcefile(package)
             print('%s: %s' % (package.__name__, fn))

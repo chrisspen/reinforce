@@ -1,4 +1,6 @@
 PyYaml
-PyBrain
+#PyBrain
+#TODO:revert once PyBrain officially releases Python3 fixes
+-e git+http://github.com/pybrain/pybrain#egg=pybrain
 cython
 six
