@@ -36,8 +36,8 @@ class Tests(unittest.TestCase):
     
         player1 = xo.RandomPlayer()
         series = []
-        mult = 1
-        games = 100000*mult
+        mult = 0.1#1
+        games = int(100000*mult)
         
         # Run fixed-epsilon SARSA.
         player2 = xo.SARSAPlayer()
@@ -135,8 +135,8 @@ class Tests(unittest.TestCase):
         
         player1 = xo.RandomPlayer()
         series = []
-        mult = 1
-        games = 100000*mult
+        mult = 0.1#1
+        games = int(100000*mult)
         
         # Run fixed-epsilon SARSA.
         player2 = xo.SARSALFAPlayer()
@@ -213,7 +213,7 @@ class Tests(unittest.TestCase):
         
         player1 = xo.RandomPlayer()
         series = []
-        mult = 3
+        mult = 0.1#3
         games = int(100000*mult)
         
         player2 = xo.SARSALFAPlayer()
@@ -380,7 +380,7 @@ class Tests(unittest.TestCase):
     def test_xo_ann(self):
         player1 = xo.RandomPlayer()
         series = []
-        mult = 0.5
+        mult = 0.1#0.5
         games = int(100000*mult)
         players = []
         
