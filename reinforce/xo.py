@@ -106,7 +106,7 @@ class Game(rl.Domain):
     
     def reset(self):
         self.board = [EMPTY]*9
-        self.empty = range(9)
+        self.empty = list(range(9))
         self.player1.reset()
         self.player2.reset()
     
