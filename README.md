@@ -1,6 +1,7 @@
 Reinforce - A simple Python reinforcement learning library.
 ===========================================================
 
+[<img src="https://secure.travis-ci.org/chrisspen/reinforce.png?branch=master" alt="Build Status">](https://travis-ci.org/chrisspen/reinforce)
 
 Overview
 -----------
