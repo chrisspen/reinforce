@@ -1,4 +1,4 @@
 #PySide
 matplotlib==2.0.0
-numpy==1.11.3
+numpy==1.12.0
 scipy==0.18.1
