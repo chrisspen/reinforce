@@ -36,6 +36,6 @@ setup(
     ],
     zip_safe=False,
     #TODO:revert once PyBrain officially releases Python3 fixes
-#     install_requires=get_reqs('pip-requirements.txt'),
-#     tests_require=get_reqs('pip-requirements-test.txt'),
+#     install_requires=get_reqs('requirements.txt'),
+#     tests_require=get_reqs('requirements-test.txt'),
 )

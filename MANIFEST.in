@@ -1,2 +1,2 @@
-include pip-requirements.txt
-include pip-requirements-test.txt
+include requirements.txt
+include requirements-test.txt
