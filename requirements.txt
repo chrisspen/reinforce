@@ -2,5 +2,5 @@ PyYaml==3.12
 #PyBrain
 #TODO:revert once PyBrain officially releases Python3 fixes
 -e git+http://github.com/pybrain/pybrain#egg=pybrain
-cython==0.25.2
+cython==0.28.1
 six==1.10.0
