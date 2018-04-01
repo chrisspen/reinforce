@@ -5,9 +5,9 @@ import os
 import sys
 import random
 
-import yaml
 import six
 from six.moves import range
+import yaml
 
 from pybrain.tools.shortcuts import buildNetwork
 from pybrain import structure as pybrain_structure
@@ -259,7 +259,7 @@ class SARSAAgent(Agent):
     (gamma) - reward discount factor (between 0 and 1)
     (alpha) - learning rate (between 0 and 1)
     (epsilon) - parameter for the epsilon-greedy policy (between 0 and 1)
-    (lambda) - parameter for the SARSA(lambda) learning algorith 
+    (lambda) - parameter for the SARSA(lambda) learning algorithm 
     """
     
     def __init__(self, alpha=0.1, gamma=1.0, epsilon=0.1, use_traces=False, *args, **kwargs):
