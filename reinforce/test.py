@@ -8,13 +8,12 @@ import time
 import unittest
 import inspect
 
+import numpy as np
+from six.moves import range
 import matplotlib
 import matplotlib.pyplot as plt
-import numpy as np
 import scipy
 from scipy.interpolate import spline
-
-from six.moves import range
 
 from reinforce import rl
 from reinforce import xo
