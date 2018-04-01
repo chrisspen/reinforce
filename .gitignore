@@ -65,3 +65,5 @@ media
 /static/
 burlap
 .idea/
+*.geany
+*.out

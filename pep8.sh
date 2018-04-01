@@ -1,2 +1,2 @@
 #!/bin/bash
-pylint --rcfile=pylint.rc reinforce
+pylint --rcfile=pylint.rc reinforce setup.py

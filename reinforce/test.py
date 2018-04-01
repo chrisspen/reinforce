@@ -11,10 +11,9 @@ import inspect
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
+from six.moves import range
 import scipy
 from scipy.interpolate import spline
-
-from six.moves import range
 
 from reinforce import rl
 from reinforce import xo
