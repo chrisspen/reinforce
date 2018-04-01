@@ -5,9 +5,9 @@ import os
 import sys
 import random
 
-import yaml
 import six
 from six.moves import range
+import yaml
 
 from pybrain.tools.shortcuts import buildNetwork
 from pybrain import structure as pybrain_structure

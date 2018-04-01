@@ -8,10 +8,10 @@ import time
 import unittest
 import inspect
 
-import matplotlib
-import matplotlib.pyplot as plt
 import numpy as np
 from six.moves import range
+import matplotlib
+import matplotlib.pyplot as plt
 import scipy
 from scipy.interpolate import spline
 
