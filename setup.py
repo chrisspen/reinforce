@@ -16,7 +16,7 @@ def get_reqs(*fns):
     return lst
 
 setup(
-    name='reinforce',
+    name='reinforce-toolkit',
     version=reinforce.__version__,
     description='A simple Python reinforcement learning library.',
     author='Chris Spencer',
@@ -28,7 +28,7 @@ setup(
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: LGPL License',
+        'License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2.7',

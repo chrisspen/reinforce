@@ -1,18 +1,19 @@
-Reinforce - A simple Python reinforcement learning library.
+Reinforce Toolkit - A simple Python reinforcement learning library.
 ===========================================================
 
-[![](https://img.shields.io/pypi/v/reinforce.svg)](https://pypi.python.org/pypi/reinforce) [![Build Status](https://img.shields.io/travis/chrisspen/reinforce.svg?branch=master)](https://travis-ci.org/chrisspen/reinforce) [![](https://pyup.io/repos/github/chrisspen/reinforce/shield.svg)](https://pyup.io/repos/github/chrisspen/reinforce)
+[![](https://img.shields.io/pypi/v/reinforce-toolkit.svg)](https://pypi.python.org/pypi/reinforce-toolkit) [![Build Status](https://img.shields.io/travis/chrisspen/reinforce.svg?branch=master)](https://travis-ci.org/chrisspen/reinforce) [![](https://pyup.io/repos/github/chrisspen/reinforce/shield.svg)](https://pyup.io/repos/github/chrisspen/reinforce)
 
 Overview
 -----------
 
+A collection of reinforcement learning algorithms.
 
 Installation
 ---------------
 
 Install the package using pip:
 
-    pip install reinforce
+    pip install reinforce-toolkit
 
 Usage
 --------
@@ -24,7 +25,7 @@ To run all [tests](http://tox.readthedocs.org/en/latest/):
 
     export TESTNAME=; tox
     
-To run tests for a specific environment (e.g. Python 2.7 with Django 1.4):
+To run tests for a specific environment:
     
     export TESTNAME=; tox -e py27
 
